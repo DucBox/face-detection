@@ -11,7 +11,18 @@ import pickle
 import argparse
 import numpy as np
 from scipy.io import loadmat
-from bbox import bbox_overlaps
+try:
+    from bbox import bbox_overlaps
+except ImportError:  # Cython extension not built (e.g. offline server): same math in numpy
+    def bbox_overlaps(boxes, query_boxes):
+        boxes, query_boxes = boxes.astype(np.float64), query_boxes.astype(np.float64)
+        iw = np.minimum(boxes[:, None, 2], query_boxes[None, :, 2]) - np.maximum(boxes[:, None, 0], query_boxes[None, :, 0]) + 1
+        ih = np.minimum(boxes[:, None, 3], query_boxes[None, :, 3]) - np.maximum(boxes[:, None, 1], query_boxes[None, :, 1]) + 1
+        area_b = (boxes[:, 2] - boxes[:, 0] + 1) * (boxes[:, 3] - boxes[:, 1] + 1)
+        area_q = (query_boxes[:, 2] - query_boxes[:, 0] + 1) * (query_boxes[:, 3] - query_boxes[:, 1] + 1)
+        inter = iw * ih
+        valid = (iw > 0) & (ih > 0)
+        return np.where(valid, inter / np.where(valid, area_b[:, None] + area_q[None, :] - inter, 1), 0.0)
 # from IPython import embed
 
 

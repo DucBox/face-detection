@@ -115,3 +115,12 @@ venv.bak/
 *.onnx
 *.pt
 *.engine
+
+# --- v6s-face-0.3.1 packaging ---
+!scripts/*.sh
+!pretrained/
+!pretrained/yolov6s_face.pt
+datasets/
+data/widerface_run.yaml
+widerface_evaluate/*.so
+widerface_evaluate/box_overlaps.c

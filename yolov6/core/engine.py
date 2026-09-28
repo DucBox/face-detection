@@ -41,7 +41,7 @@ class Trainer:
         self.device = device
 
         if args.resume:
-            self.ckpt = torch.load(args.resume, map_location='cpu')
+            self.ckpt = torch.load(args.resume, map_location='cpu', weights_only=False)
 
         self.rank = args.rank
         self.local_rank = args.local_rank
@@ -411,7 +411,7 @@ class Trainer:
         if not weights:
             LOGGER.error("ERROR: No scales provided to init RepOptimizer!")
         else:
-            ckpt = torch.load(weights, map_location=device)
+            ckpt = torch.load(weights, map_location=device, weights_only=False)
             scales = extract_scales(ckpt)
         return scales
 
@@ -554,5 +554,5 @@ class Trainer:
                     skip_sensitive_layers(model, cfg.qat.sensitive_layers_list)
                 # QAT flow load calibrated model
                 assert cfg.qat.calib_pt is not None, 'Please provide calibrated model'
-                model.load_state_dict(torch.load(cfg.qat.calib_pt)['model'].float().state_dict())
+                model.load_state_dict(torch.load(cfg.qat.calib_pt, weights_only=False)['model'].float().state_dict())
             model.to(device)

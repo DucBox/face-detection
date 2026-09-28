@@ -40,9 +40,9 @@ def repulsion_loss(pbox, gtbox, fg_mask, sigma_repgt=0.9, sigma_repbox=0, pnms=0
         pgiou = pairwise_bbox_iou(_pbox_pos, _gtbox_pos, box_format='xyxy')
         ppiou = pairwise_bbox_iou(_pbox_pos, _pbox_pos, box_format='xyxy')
 
-        pgiou = pgiou.cuda().data.cpu().numpy()
-        ppiou = ppiou.cuda().data.cpu().numpy()
-        _gtbox_pos_cpu = _gtbox_pos.cuda().data.cpu().numpy()
+        pgiou = pgiou.data.cpu().numpy()
+        ppiou = ppiou.data.cpu().numpy()
+        _gtbox_pos_cpu = _gtbox_pos.data.cpu().numpy()
        
         for j in range(pgiou.shape[0]):
             for z in range(j, pgiou.shape[0]):
